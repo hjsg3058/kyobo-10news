@@ -120,7 +120,6 @@
     width: 100%;
     height: 42%;
     display: none;
-    filter: drop-shadow(0 12px 16px rgba(15, 50, 15, .22));
   }
   .has-3d .title3d { display: block; }
   .has-3d .s-year, .has-3d .s-kyobo, .has-3d .s-news { visibility: hidden; }
@@ -1172,22 +1171,42 @@ if (reduce || !("IntersectionObserver" in window)) {
 import * as THREE from "three";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 const FONT = {"glyphs":{"0":{"ha":600,"x_min":-5,"x_max":605,"o":"m 300 -13 q 143 29.5 212 -13 q 34.5 154 74 72 q -5 350 -5 236 l -5 350 q 34.5 546 -5 464 q 143 670.5 74 628 q 300 713 212 713 l 300 713 q 457.5 670.5 388 713 q 566 546 527 628 q 605 350 605 464 l 605 350 q 566 154 605 236 q 457.5 29.5 527 72 q 300 -13 388 -13 l 300 -13 m 300 141 q 388 191 356 141 q 420 350 420 241 l 420 350 q 388 509 420 459 q 300 559 356 559 l 300 559 q 212.5 509 244 559 q 181 350 181 459 l 181 350 q 212.5 191 181 241 q 300 141 244 141 l 300 141"},"1":{"ha":600,"x_min":107,"x_max":424,"o":"m 424 700 l 424 0 l 241 0 l 241 554 l 107 554 l 107 700 l 424 700"},"2":{"ha":600,"x_min":-1,"x_max":572,"o":"m 572 149 l 572 0 l 34 0 l 34 119 l 299 366 q 353 430.5 339 403 q 367 484 367 458 l 367 484 q 341.5 540.5 367 521 q 267 560 316 560 l 267 560 q 191.5 543 226 560 q 133 492 157 526 l 133 492 l -1 577 q 115.5 676.5 41 640 q 285 713 190 713 l 285 713 q 424.5 687.5 364 713 q 518 614 485 662 q 551 502 551 566 l 551 502 q 527 394 551 445 q 434 280 503 343 l 434 280 l 291 149 l 572 149"},"6":{"ha":600,"x_min":7,"x_max":598,"o":"m 355 444 q 477.5 416.5 422 444 q 565.5 339 533 389 q 598 224 598 289 l 598 224 q 562 99 598 153 q 464 16 526 45 q 326 -13 402 -13 l 326 -13 q 92.5 76.5 178 -13 q 7 333 7 166 l 7 333 q 53 538 7 452 q 182 668.5 99 624 q 373 713 265 713 l 373 713 q 484.5 700 431 713 q 575 663 538 687 l 575 663 l 508 529 q 378 565 455 565 l 378 565 q 266 534.5 312 565 q 201 446 220 504 l 201 446 q 191 399 197 431 l 191 399 q 355 444 257 444 l 355 444 m 316 123 q 391 148 362 123 q 420 215 420 173 l 420 215 q 391 283 420 258 q 315 308 362 308 l 315 308 q 238 282 268 308 q 208 215 208 256 l 208 215 q 236.5 148 208 173 q 316 123 265 123 l 316 123"},"교":{"ha":792,"x_min":25,"x_max":766,"o":"m 564 563 l 61 563 l 61 719 l 730 719 l 730 213 l 564 213 l 564 563 m 766 146 l 766 -10 l 25 -10 l 25 146 l 127 146 l 127 401 l 292 401 l 292 146 l 347 146 l 347 401 l 511 401 l 511 146 l 766 146"},"보":{"ha":792,"x_min":25,"x_max":766,"o":"m 766 150 l 766 -10 l 25 -10 l 25 150 l 314 150 l 314 250 l 62 250 l 62 718 l 223 718 l 223 632 l 569 632 l 569 718 l 729 718 l 729 250 l 478 250 l 478 150 l 766 150 m 223 403 l 569 403 l 569 481 l 223 481 l 223 403"},"생":{"ha":792,"x_min":22,"x_max":765,"o":"m 560 313 l 410 313 l 410 731 l 560 731 l 560 622 l 607 622 l 607 734 l 759 734 l 759 288 l 607 288 l 607 465 l 560 465 l 560 313 m 231 424 q 137.5 327.5 192 361 q 22 296 83 294 l 22 296 l 22 449 q 84 485.5 55 452 q 131 581.5 113 519 q 149 729 149 644 l 149 729 l 302 723 q 287 573 302 648 l 287 573 l 440 425 l 337 317 l 231 424 m 417 291 q 671 251 577 291 q 765 122 765 211 l 765 122 q 670.5 -5.5 765 35 q 417 -46 576 -46 l 417 -46 q 164.5 -5.5 259 -46 q 70 122 70 35 l 70 122 q 164 251 70 211 q 417 291 258 291 l 417 291 m 417 87 q 591 122 591 87 l 591 122 q 417 157 591 157 l 417 157 q 243 122 243 157 l 243 122 q 417 87 243 87 l 417 87"},"명":{"ha":792,"x_min":42,"x_max":748,"o":"m 582 373 l 517 373 l 517 519 l 582 519 l 582 555 l 517 555 l 517 701 l 582 701 l 582 734 l 741 734 l 741 312 l 582 312 l 582 373 m 485 338 l 42 338 l 42 728 l 485 728 l 485 338 m 325 588 l 202 588 l 202 478 l 325 478 l 325 588 m 409 305 q 656 264 564 305 q 748 130 748 223 l 748 130 q 656 -4.5 748 37 q 409 -46 564 -46 l 409 -46 q 162.5 -4.5 254 -46 q 71 130 71 37 l 71 130 q 162.5 263.5 71 222 q 409 305 254 305 l 409 305 m 409 90 q 529 99.5 484 90 q 574 130 574 109 l 574 130 q 529 159.5 574 150 q 409 169 484 169 l 409 169 q 291 159.5 335 169 q 247 130 247 150 l 247 130 q 409 90 247 90 l 409 90"},"대":{"ha":792,"x_min":36,"x_max":759,"o":"m 759 734 l 759 -34 l 607 -34 l 607 298 l 564 298 l 564 -21 l 415 -21 l 415 731 l 564 731 l 564 460 l 607 460 l 607 734 l 759 734 m 217 148 q 307.5 154.5 260 148 q 387 173 355 161 l 387 173 l 387 26 q 304 6 356 13 q 203 -1 252 -1 l 203 -1 l 36 -1 l 36 719 l 355 719 l 355 570 l 191 570 l 191 148 l 217 148"},"뉴":{"ha":792,"x_min":25,"x_max":766,"o":"m 729 359 l 65 359 l 65 732 l 232 732 l 232 516 l 729 516 l 729 359 m 766 144 l 620 144 l 620 -52 l 458 -52 l 458 144 l 334 144 l 334 -52 l 172 -52 l 172 144 l 25 144 l 25 301 l 766 301 l 766 144"},"스":{"ha":792,"x_min":25,"x_max":773,"o":"m 393 431 q 236.5 292.5 328 342 q 40 242 145 243 l 40 242 l 40 404 q 175 446.5 111 405 q 282 564 239 488 q 336 739 325 640 l 336 739 l 501 713 q 465 565 491 627 l 465 565 l 773 376 l 687 237 l 393 431 m 25 150 l 766 150 l 766 -10 l 25 -10 l 25 150"}},"familyName":"Paperlogy","ascender":880,"descender":-180,"underlinePosition":-90,"underlineThickness":45,"boundingBox":{"yMin":-235,"xMin":-523,"yMax":1001,"xMax":1773},"resolution":900,"original_font_information":{"format":0,"fontFamily":"Paperlogy","fontSubfamily":"Black"},"cssFontWeight":"900","cssFontStyle":"normal"};
 try {
   const canvas = document.getElementById("title3d");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.75));
-  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(-3, 5, 6); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.6); rim.position.set(5, -2, 3); scene.add(rim);
+  /* 주변 반사: 실내 조명 환경 → 회전 각도에 따라 하이라이트와 반사가 움직임 */
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  /* 위는 흰 하늘빛, 아래는 초록 바닥에서 튀는 빛 */
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x4dbd38, 0.55));
+  const key = new THREE.DirectionalLight(0xffffff, 2.1);
+  key.position.set(-2.2, 3.2, 8);
+  key.castShadow = true;
+  key.shadow.mapSize.set(512, 512);
+  Object.assign(key.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 0.5, far: 25 });
+  key.shadow.bias = -0.0005;
+  key.shadow.normalBias = 0.02;
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.5); rim.position.set(5, -2, 3); scene.add(rim);
+  /* 글자 뒤 보이지 않는 판: 그림자만 받아서 초록 바탕 위에 떨어뜨림 */
+  const catcher = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), new THREE.ShadowMaterial({ opacity: 0.17 }));
+  catcher.position.z = -1.2;
+  catcher.receiveShadow = true;
+  scene.add(catcher);
 
   const font = new FontLoader().parse(FONT);
-  const front = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  /* 앞면: 흰색, 살짝 광택 (빛을 받아 회전에 따라 밝기가 변함) */
+  const front = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.35, metalness: 0, clearcoat: 0.55, clearcoatRoughness: 0.3, envMapIntensity: 0.65, emissive: 0xffffff, emissiveIntensity: 0.18 });
   /* 옆면(두께): 페이지 남색 #13366D */
-  const side = new THREE.MeshStandardMaterial({ color: 0x13366d, roughness: 0.6, metalness: 0 });
+  const side = new THREE.MeshStandardMaterial({ color: 0x13366d, roughness: 0.42, metalness: 0, envMapIntensity: 0.9 });
   const group = new THREE.Group(); scene.add(group);
   const GAP = 1.16, LINES = ["2026", "교보생명", "10대뉴스"];
   let maxW = 0;
@@ -1199,7 +1218,10 @@ try {
     geo.translate(-(b.max.x + b.min.x) / 2, 0, -0.18);
     const pivot = new THREE.Group();
     pivot.position.y = -i * GAP;
-    pivot.add(new THREE.Mesh(geo, [front, side]));
+    const mesh = new THREE.Mesh(geo, [front, side]);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    pivot.add(mesh);
     group.add(pivot);
     return pivot;
   });
