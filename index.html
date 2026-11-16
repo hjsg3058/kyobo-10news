@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<title>2026 내 손으로 뽑는 10대뉴스</title>
+<script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.min.js","three/addons/":"./assets/vendor/three/addons/"}}</script>
+<meta name="description" content="2026 교보생명 내 손으로 뽑는 10대뉴스. 후보 17개를 살펴보고 이지모아에서 10개를 골라 투표해주세요.">
+<meta property="og:title" content="2026 교보생명 내 손으로 뽑는 10대뉴스">
+<meta property="og:description" content="올해의 뉴스에 투표해주세요. 투표 기간 11.23(월) ~ 11.27(금)">
+<link rel="stylesheet" href="assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<style>
+  :root {
+    --white: #FFFFFF;
+    --navy: #13366D;
+    --green: #4DBD38;
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--white);
+    color: var(--navy);
+    font-family: "Pretendard Variable", "Pretendard", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+  ::selection { background: var(--green); color: var(--white); }
+  :focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- 인트로 무대 ---------- */
+  .intro {
+    position: relative;
+    height: 100svh;
+    min-height: 560px;
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  /* 1막: 타이핑 */
+  .typeset {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 28px 6vh;
+  }
+  .typeset-in { width: 100%; max-width: 420px; margin: 0 auto; }
+  .tline { position: relative; white-space: pre-line; }
+  .tline .ghost { visibility: hidden; }
+  .tline .typed { position: absolute; left: 0; top: 0; right: 0; }
+  .typeset .tline { text-align: center; }
+  .typeset .rule { transform-origin: 50% 50%; }
+  .t-title {
+    font-size: clamp(40px, 12vw, 54px);
+    font-weight: 800;
+    line-height: 1.16;
+    letter-spacing: -0.04em;
+  }
+  .t-sub {
+    font-size: clamp(21px, 6vw, 27px);
+    font-weight: 700;
+    line-height: 1.32;
+    letter-spacing: -0.03em;
+  }
+  .caret {
+    display: inline-block;
+    width: .07em;
+    min-width: 3px;
+    height: .92em;
+    margin-left: .1em;
+    vertical-align: -0.08em;
+    background: var(--navy);
+    border-radius: 1px;
+  }
+  .caret.idle { animation: blink 1s steps(1) infinite; }
+  .caret.off { display: none; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .rule {
+    width: 100%;
+    height: 3px;
+    margin: 26px 0 22px;
+    background: var(--green);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  /* 2막: 초록 화면 */
+  .flood {
+    position: absolute;
+    inset: 0;
+    background: var(--green);
+    clip-path: inset(50% 50% 50% 50%);
+    visibility: hidden;
+  }
+  .board {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(100vw, 480px);
+    aspect-ratio: 9 / 16;
+    transform: translate(-50%, -54%);
+  }
+  @font-face {
+    font-family: "Paperlogy";
+    src: url("assets/fonts/Paperlogy-9Black.ttf") format("truetype");
+    font-weight: 900;
+    font-display: block;
+  }
+  /* 진짜 3D 제목 (WebGL). 불러오지 못하면 아래 HTML 글자가 대신 보임 */
+  .title3d {
+    position: absolute;
+    left: 0;
+    top: 8%;
+    width: 100%;
+    height: 42%;
+    display: none;
+    filter: drop-shadow(0 12px 16px rgba(15, 50, 15, .22));
+  }
+  .has-3d .title3d { display: block; }
+  .has-3d .s-year, .has-3d .s-kyobo, .has-3d .s-news { visibility: hidden; }
+  .has-3d .s-date { margin-top: 8%; text-shadow: 0 2px 6px rgba(15, 50, 15, .25); }
+
+  /* 3D 글자: 앞면은 단색 흰색, 옆면은 같은 글자를 겹겹이 쌓아 두께를 만듦 */
+  .title-stack {
+    position: absolute;
+    left: 0; right: 0;
+    top: 16%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    perspective: 900px;
+    perspective-origin: 50% 20%;
+  }
+  .sticker {
+    margin: 0;
+    opacity: 0;
+    color: #FFFFFF;
+    font-family: "Paperlogy", "Pretendard Variable", sans-serif;
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transform-origin: 50% 100%;
+  }
+  .s-year, .s-kyobo, .s-news {
+    font-size: clamp(50px, 15.6vw, 74px);
+    text-shadow:
+      0.50px 1.10px 0 rgb(201,227,194),
+      0.99px 2.20px 0 rgb(186,217,178),
+      1.49px 3.30px 0 rgb(170,206,163),
+      1.98px 4.40px 0 rgb(155,196,147),
+      2.48px 5.50px 0 rgb(140,185,132),
+      2.97px 6.60px 0 rgb(124,175,116),
+      3.47px 7.70px 0 rgb(109,164,100),
+      3.96px 8.80px 0 rgb(93,154,85),
+      4.46px 9.90px 0 rgb(78,143,69),
+      0 13px 6px rgba(15,50,15,.2),
+      0 24px 28px rgba(15,50,15,.24);
+  }
+  .s-date {
+    margin-top: 5.5%;
+    font-size: clamp(16px, 4.9vw, 22px);
+    letter-spacing: 0;
+    text-shadow:
+      0.45px 1.00px 0 rgb(201,227,194),
+      0.90px 2.00px 0 rgb(148,193,140),
+      1.35px 3.00px 0 rgb(94,158,85),
+      0 6px 8px rgba(15,50,15,.2);
+  }
+  .board-foot {
+    position: absolute;
+    left: 0; right: 0;
+    top: 61%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .dday {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 9px 20px 10px;
+    background: var(--white);
+    color: var(--navy);
+    border: 3px solid var(--navy);
+    border-radius: 999px;
+    box-shadow: 0 5px 0 #3A9A2C;
+    opacity: 0;
+  }
+  .dday-label { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+  .dday-value { font-size: 24px; font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .dday.closed .dday-label { font-size: 16px; font-weight: 800; }
+  .cue {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--navy);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    opacity: 0;
+  }
+  .cue svg { width: 12px; height: 14px; }
+  .penguin {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: min(40vw, 190px, 22svh);
+    transform: translateX(-50%);
+  }
+  .penguin img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform-origin: 50% 100%;
+    transform: translateY(115%);
+  }
+  .penguin.settled img { animation: sway 3.2s ease-in-out infinite; }
+  @keyframes sway {
+    0%, 100% { transform: translateY(14%) rotate(-2deg); }
+    50% { transform: translateY(13%) rotate(2deg); }
+  }
+  .pop-marks {
+    position: absolute;
+    right: 2%;
+    top: 4%;
+    width: 22%;
+    overflow: visible;
+    opacity: 0;
+  }
+
+  .replay {
+    position: absolute;
+    top: max(16px, env(safe-area-inset-top));
+    right: 16px;
+    min-height: 36px;
+    padding: 0 14px;
+    border: 1.5px solid var(--navy);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .92);
+    color: var(--navy);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .4s var(--ease-out);
+  }
+  .replay.show { opacity: 1; pointer-events: auto; }
+  .replay:active { transform: translateY(1px); }
+
+  /* ---------- 스티커 문법 (인트로 스티커 글자와 같은 재료) ---------- */
+  :root { --leaf: #3A9A2C; --mint: #EAF7E6; --line: #DCE3EC; }
+  .stk {
+    color: var(--white);
+    -webkit-text-stroke: .16em var(--navy);
+    paint-order: stroke fill;
+    filter: drop-shadow(0 .07em 0 var(--leaf));
+    font-weight: 900;
+    letter-spacing: .01em;
+  }
+
+  /* ---------- 진행 선 ---------- */
+  .progress {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 20;
+    padding-top: env(safe-area-inset-top);
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+    transform: translateY(-100%);
+    transition: transform .35s var(--ease-out);
+  }
+  .progress.on { transform: none; }
+  .progress-in {
+    max-width: 480px;
+    height: 46px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-count { min-width: 56px; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .progress-track { flex: 1; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); transform-origin: 0 50%; transform: scaleX(0); transition: transform .45s var(--ease-out); }
+
+  /* ---------- 안내 ---------- */
+  .guide {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 72px 28px;
+  }
+  .guide-in { width: 100%; max-width: 420px; margin: 0 auto; }
+  .g-title {
+    font-size: clamp(32px, 9.4vw, 42px);
+    font-weight: 800;
+    line-height: 1.22;
+    letter-spacing: -0.04em;
+  }
+  .guide .rule { transform: scaleX(1); margin: 28px 0 22px; }
+  .guide p { margin: 0; font-size: 17px; line-height: 1.6; font-weight: 500; }
+  .guide p b { font-weight: 800; }
+
+  /* ---------- 후보 ---------- */
+  /* 후보 구역: 아주 연한 두 가지 바탕을 번갈아 */
+  .cand:nth-child(odd) { background: #F1F9EE; }
+  .cand:nth-child(even) { background: #EEF3FA; }
+  .cand .thumb { background: var(--white); }
+  .cand {
+    min-height: 100svh;
+    padding: 84px 24px 64px;
+    display: flex;
+    align-items: center;
+  }
+  /* 관련 콘텐츠가 없는 후보는 한 화면을 다 채우지 않고 바로 다음 후보로 이어짐 */
+  .cand.slim { min-height: 0; padding-top: 96px; padding-bottom: 64px; }
+  .cand.slim ul { margin-bottom: 0; }
+  .cand-in { width: 100%; max-width: 432px; margin: 0 auto; }
+  .cand-head { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 22px; }
+  .cand .num { font-size: 92px; line-height: .9; margin: 0; font-variant-numeric: tabular-nums; }
+  .cand .of { font-size: 17px; font-weight: 800; padding-bottom: 8px; }
+  .cand h2 {
+    margin: 0 0 14px;
+    font-size: 27px;
+    line-height: 1.3;
+    letter-spacing: -0.035em;
+    font-weight: 800;
+    text-wrap: balance;
+  }
+  .cand ul { list-style: none; margin: 0 0 30px; padding: 0; }
+  .cand li { position: relative; padding-left: 18px; font-size: 16px; line-height: 1.6; color: #2A4A7A; }
+  .cand li + li { margin-top: 6px; }
+  .cand li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .cards { display: grid; gap: 30px; }
+  .card { display: block; color: var(--navy); text-decoration: none; border-radius: 20px; }
+  .card:focus-visible { outline-offset: 6px; }
+  .thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--mint);
+    border: 2px solid var(--navy);
+    transition: transform .25s var(--ease-out);
+  }
+  .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  /* 실제 썸네일은 잘리지 않게 원본 비율 그대로 보여줌 */
+  .thumb.has-img { aspect-ratio: auto; }
+  .thumb.has-img img { height: auto; object-fit: initial; }
+  .thumb .ph-num { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); font-size: 64px; }
+  .thumb .ph-tag {
+    position: absolute;
+    left: 12px; bottom: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .card:active .thumb { transform: scale(.98); }
+  @media (hover: hover) { .card:hover .thumb { transform: translateY(-3px); } }
+  .card-title {
+    margin: 13px 0 9px;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.38;
+    letter-spacing: -0.02em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .src {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    border: 1.5px solid var(--navy);
+  }
+  .src.newsroom { background: var(--navy); color: var(--white); }
+  .src.webzine { background: var(--white); color: var(--navy); }
+
+  /* ---------- 마무리 ---------- */
+  .finale {
+    background: var(--green);
+    padding: 64px 24px 0;
+    text-align: center;
+    overflow: hidden;
+  }
+  .finale-in { max-width: 432px; margin: 0 auto; }
+  .finale h2 { margin: 0 0 14px; font-size: clamp(36px, 10.6vw, 46px); line-height: 1.18; }
+  .finale .lede { margin: 0 0 40px; font-size: 17px; font-weight: 600; }
+  .prize {
+    margin: 0 0 40px;
+    border: 3px solid var(--navy);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: 0 6px 0 var(--leaf);
+  }
+  .prize img { display: block; width: 100%; height: auto; }
+  .prize-ph {
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mint);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .channels {
+    text-align: left;
+    background: var(--white);
+    border: 3px solid var(--navy);
+    border-radius: 22px;
+    box-shadow: 0 6px 0 var(--leaf);
+    padding: 4px 22px;
+  }
+  .channel { padding: 20px 0 22px; }
+  .channel + .channel { border-top: 1.5px dashed var(--line); }
+  .channel h3 { margin: 0 0 14px; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
+  .channel p { margin: 0 0 16px; font-size: 15px; color: #2A4A7A; }
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    border-radius: 999px;
+    border: 2px solid var(--navy);
+    background: var(--navy);
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform .15s var(--ease-out);
+  }
+  .btn.alt { background: var(--white); color: var(--navy); }
+  .btn:active { transform: translateY(2px); }
+  .finale-penguin { display: block; width: 132px; height: auto; margin: 48px auto -8px; }
+  footer {
+    background: var(--green);
+    border-top: 2px solid var(--navy);
+    text-align: center;
+    padding: 22px 20px max(28px, env(safe-area-inset-bottom));
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ---------- 진입 모션 (JS + 모션 허용일 때만) ---------- */
+  .motion .rv { opacity: 0; transform: translateY(16px); }
+  .motion .in .rv { opacity: 1; transform: none; transition: opacity .55s var(--ease-out), transform .65s var(--ease-out); transition-delay: var(--d, 0s); }
+  .motion .pop { opacity: 0; transform: scale(.6) rotate(-6deg); }
+  .motion .in .pop { opacity: 1; transform: none; transition: transform .55s var(--ease-pop), opacity .2s linear; }
+  @media (prefers-reduced-motion: reduce) {
+    .progress, .progress-fill, .thumb, .btn { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <section class="intro" id="intro" aria-labelledby="intro-title">
+    <h1 class="sr" id="intro-title">2026 교보생명 내 손으로 뽑는 10대뉴스. 올해의 뉴스에 투표해주세요. 투표 기간 11월 23일(월)부터 11월 27일(금)까지.</h1>
+
+    <div class="typeset" id="typeset" aria-hidden="true">
+      <div class="typeset-in">
+        <div class="tline t-title" id="l1"><span class="ghost">내 손으로 뽑는
+10대뉴스</span><span class="typed"></span></div>
+        <div class="rule" id="rule"></div>
+        <div class="tline t-sub" id="l2"><span class="ghost">올해의 뉴스에
+투표해주세요</span><span class="typed"></span></div>
+      </div>
+    </div>
+
+    <div class="flood" id="flood">
+      <div class="board">
+        <canvas class="title3d" id="title3d" aria-hidden="true"></canvas>
+        <div class="title-stack" aria-hidden="true">
+          <p class="sticker s-year">2026</p>
+          <p class="sticker s-kyobo">교보생명</p>
+          <p class="sticker s-news">10대뉴스</p>
+          <p class="sticker s-date">11월 23일 (월) ~ 11월 27일 (금)</p>
+        </div>
+        <div class="board-foot">
+          <p class="dday" id="dday" role="status" style="margin:0"><span class="dday-label" id="ddayLabel">투표 시작까지</span><span class="dday-value" id="ddayValue">D-N</span></p>
+          <p class="cue" id="cue" style="margin:0">아래로 넘겨 후보 17개 보기
+            <svg viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 1v11M1.5 7.5 6 12l4.5-4.5"/></svg>
+          </p>
+        </div>
+      </div>
+      <div class="penguin" id="penguin" aria-hidden="true">
+        <svg class="pop-marks" id="popMarks" viewBox="0 0 60 60" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round">
+          <path d="M14 30 L4 34"/><path d="M22 14 L16 4"/><path d="M38 12 L44 3"/>
+        </svg>
+        <img src="assets/penguin.png" alt="">
+      </div>
+    </div>
+
+    <button class="replay" id="replay" type="button" hidden>다시 보기</button>
+  </section>
+
+  <!-- 안내 -->
+  <section class="guide" id="guide" aria-labelledby="guide-title">
+    <div class="guide-in">
+      <h2 class="sr" id="guide-title">아래 후보 중 10개를 골라 투표해주세요</h2>
+      <div class="tline g-title" id="gline" aria-hidden="true"><span class="ghost">아래 후보 중
+10개를 골라
+투표해주세요</span><span class="typed"></span></div>
+      <div class="rule rv" style="--d:.1s"></div>
+      <p class="rv" style="--d:.2s">후보는 모두 <b>17개</b>예요.<br>마음에 남은 뉴스 <b>10개</b>를 골라 이지모아에서 투표해주세요.</p>
+    </div>
+  </section>
+
+  <!-- 후보 01~17 -->
+  <div id="cands"></div>
+
+  <!-- 마무리 -->
+  <section class="finale" id="finale" aria-label="경품 안내와 바로가기" data-impeccable-ignore="cramped-padding">
+    <div class="finale-in">
+      <figure class="prize rv" style="--d:.2s">
+        <!-- 경품 이미지가 준비되면 아래 div를 지우고 이 한 줄로 바꾸세요:
+             <img src="assets/prize.png" alt="경품 추첨 안내">
+             가로는 칸에 꽉 차고, 세로는 이미지 비율대로 늘어납니다. -->
+        <div class="prize-ph">경품 추첨 이미지 자리</div>
+      </figure>
+      <div class="channels rv">
+        <div class="channel">
+          <h3>교보생명 뉴스룸</h3>
+          <a class="btn" data-base="https://news.kyobo.com/" data-utm="outro_newsroom" target="_blank" rel="noopener">뉴스룸 바로가기</a>
+        </div>
+        <div class="channel">
+          <h3>매거진K</h3>
+          <a class="btn alt" data-base="https://www.magazine-k.co.kr/" data-utm="outro_webzine" target="_blank" rel="noopener">매거진K 바로가기</a>
+        </div>
+      </div>
+      <img class="finale-penguin pop" src="assets/penguin.png" alt="" loading="lazy">
+    </div>
+  </section>
+  <footer>교보생명 브랜드홍보팀</footer>
+</main>
+
+<div class="progress" id="progress" aria-hidden="true">
+  <div class="progress-in">
+    <span class="progress-count" id="progressCount">01 / 17</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<script>
+/* ===== 한글 두벌식 입력 흉내 ===== */
+const CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+const JUNG = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ";
+const JONG = ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+const V2 = { "ㅘ": "ㅗㅏ", "ㅙ": "ㅗㅐ", "ㅚ": "ㅗㅣ", "ㅝ": "ㅜㅓ", "ㅞ": "ㅜㅔ", "ㅟ": "ㅜㅣ", "ㅢ": "ㅡㅣ" };
+const C2 = { "ㄳ": "ㄱㅅ", "ㄵ": "ㄴㅈ", "ㄶ": "ㄴㅎ", "ㄺ": "ㄹㄱ", "ㄻ": "ㄹㅁ", "ㄼ": "ㄹㅂ", "ㄽ": "ㄹㅅ", "ㄾ": "ㄹㅌ", "ㄿ": "ㄹㅍ", "ㅀ": "ㄹㅎ", "ㅄ": "ㅂㅅ" };
+const join = (m, s) => Object.keys(m).find(k => m[k] === s);
+const isVowel = k => JUNG.includes(k);
+const syl = (c, v, j = "") => String.fromCharCode(0xAC00 + (CHO.indexOf(c) * 21 + JUNG.indexOf(v)) * 28 + JONG.indexOf(j));
+
+function keysOf(text) {
+  const keys = [];
+  for (const ch of text) {
+    const code = ch.charCodeAt(0) - 0xAC00;
+    if (code < 0 || code > 11171) { keys.push(ch); continue; }
+    const c = CHO[Math.floor(code / 588)], v = JUNG[Math.floor((code % 588) / 28)], j = JONG[code % 28];
+    keys.push(c, ...(V2[v] || v), ...(j ? (C2[j] || j) : []));
+  }
+  return keys;
+}
+/* 키 하나 누를 때마다 화면에 보일 문자열 목록 */
+function frames(text) {
+  let done = "", cur = null;
+  const show = () => done + (cur ? (cur.v ? syl(cur.c, cur.v, cur.j || "") : cur.c) : "");
+  const commit = () => { if (cur) done += cur.v ? syl(cur.c, cur.v, cur.j || "") : cur.c; cur = null; };
+  const out = [];
+  for (const k of keysOf(text)) {
+    if (!CHO.includes(k) && !isVowel(k)) { commit(); done += k; }
+    else if (isVowel(k)) {
+      if (cur && cur.c && !cur.v) cur.v = k;
+      else if (cur && cur.v && !cur.j && join(V2, cur.v + k)) cur.v = join(V2, cur.v + k);
+      else if (cur && cur.j) {
+        const split = C2[cur.j];
+        const moved = split ? split[1] : cur.j;
+        cur.j = split ? split[0] : "";
+        commit(); cur = { c: moved, v: k };
+      } else { commit(); done += k; }
+    } else {
+      if (!cur) cur = { c: k };
+      else if (!cur.v) { commit(); cur = { c: k }; }
+      else if (!cur.j && JONG.includes(k)) cur.j = k;
+      else if (cur.j && join(C2, cur.j + k)) cur.j = join(C2, cur.j + k);
+      else { commit(); cur = { c: k }; }
+    }
+    out.push(show());
+  }
+  commit();
+  if (out[out.length - 1] !== done) out.push(done);
+  return out;
+}
+
+/* ===== 연출 ===== */
+const $ = id => document.getElementById(id);
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const caret = document.createElement("span");
+caret.className = "caret off";
+let run = 0;
+
+async function typeLine(el, id) {
+  const typed = el.querySelector(".typed");
+  const text = el.querySelector(".ghost").textContent;
+  typed.textContent = "";
+  typed.appendChild(caret);
+  caret.className = "caret";
+  for (const f of frames(text)) {
+    if (id !== run) return false;
+    typed.firstChild && typed.firstChild.nodeType === 3 ? typed.firstChild.textContent = f : typed.prepend(document.createTextNode(f));
+    await wait(f.endsWith("\n") ? 170 : f.endsWith(" ") ? 95 : 40 + Math.random() * 28);
+  }
+  return true;
+}
+
+function resetStage() {
+  if (window.title3d) window.title3d.reset();
+  ["l1", "l2"].forEach(i => { const t = $(i).querySelector(".typed"); t.textContent = ""; });
+  caret.className = "caret off";
+  $("rule").getAnimations().forEach(a => a.cancel());
+  $("rule").style.transform = "scaleX(0)";
+  $("typeset").getAnimations().forEach(a => a.cancel());
+  [$("l1"), $("l2")].forEach(e => e.getAnimations().forEach(a => a.cancel()));
+  const flood = $("flood");
+  flood.getAnimations().forEach(a => a.cancel());
+  flood.style.visibility = "hidden";
+  flood.style.clipPath = "inset(50% 50% 50% 50%)";
+  document.querySelectorAll(".sticker, .dday, .cue").forEach(s => { s.getAnimations().forEach(a => a.cancel()); s.style.opacity = 0; });
+  const p = $("penguin"); p.classList.remove("settled");
+  p.querySelector("img").getAnimations().forEach(a => a.cancel());
+  p.querySelector("img").style.transform = "translateY(115%)";
+  $("popMarks").getAnimations().forEach(a => a.cancel());
+  $("replay").classList.remove("show");
+  document.querySelector('meta[name="theme-color"]').content = "#FFFFFF";
+}
+
+function showFinal() {
+  if (window.title3d) window.title3d.showFinal();
+  const flood = $("flood");
+  flood.style.visibility = "visible"; flood.style.clipPath = "inset(0)";
+  document.querySelectorAll(".sticker, .dday, .cue").forEach(s => s.style.opacity = 1);
+  const p = $("penguin"); p.querySelector("img").style.transform = "translateY(14%)";
+  document.querySelector('meta[name="theme-color"]').content = "#4DBD38";
+  $("replay").classList.add("show");
+}
+
+async function play() {
+  const id = ++run;
+  resetStage();
+  if (reduce) {
+    $("flood").animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
+    showFinal();
+    return;
+  }
+  await wait(350);
+  /* 초록선이 가운데서 양옆으로 */
+  $("rule").animate([{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], { duration: 520, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" });
+  await wait(380);
+  if (!(await typeLine($("l1"), id))) return;
+  await wait(140);
+  if (!(await typeLine($("l2"), id))) return;
+  caret.className = "caret idle";
+  await wait(650);
+  if (id !== run) return;
+  caret.className = "caret off";
+
+  /* 초록선이 화면 전체로 확장 */
+  const r = $("rule").getBoundingClientRect(), H = $("intro").clientHeight, W = $("intro").clientWidth;
+  const top = r.top - $("intro").getBoundingClientRect().top;
+  const from = `inset(${top}px ${W - r.right}px ${H - top - r.height}px ${r.left}px)`;
+  const mid = `inset(${top}px 0px ${H - top - r.height}px 0px)`;
+  const flood = $("flood");
+  flood.style.visibility = "visible";
+  $("l1").animate([{ transform: "none", opacity: 1 }, { transform: "translateY(-18px)", opacity: 0 }], { duration: 380, easing: "cubic-bezier(.7,0,.84,0)", fill: "forwards", delay: 120 });
+  $("l2").animate([{ transform: "none", opacity: 1 }, { transform: "translateY(18px)", opacity: 0 }], { duration: 380, easing: "cubic-bezier(.7,0,.84,0)", fill: "forwards", delay: 120 });
+  const grow = flood.animate([
+    { clipPath: from },
+    { clipPath: mid, offset: .32 },
+    { clipPath: "inset(0px 0px 0px 0px)" }
+  ], { duration: 980, easing: "cubic-bezier(.76,0,.24,1)", fill: "forwards" });
+  await wait(1000);
+  if (id !== run) return;
+  document.querySelector('meta[name="theme-color"]').content = "#4DBD38";
+
+  /* 스티커 글자: 한 줄씩 통통 */
+  /* 3D: 바닥을 축으로 누워 있던 글자가 일어서며 등장 */
+  const pop = (el, delay, tilt) => el.animate([
+    { opacity: 0, transform: `translateY(30px) rotateX(-88deg) rotateY(${tilt * 3}deg)` },
+    { opacity: 1, transform: "translateY(-6px) rotateX(14deg) rotateY(0deg)", offset: .55 },
+    { opacity: 1, transform: "translateY(0) rotateX(-4deg)", offset: .8 },
+    { opacity: 1, transform: "none" }
+  ], { duration: 820, delay, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
+  if (window.title3d) window.title3d.play();
+  else {
+    pop(document.querySelector(".s-year"), 80, -6);
+    pop(document.querySelector(".s-kyobo"), 230, 4);
+    pop(document.querySelector(".s-news"), 380, -4);
+  }
+  document.querySelector(".s-date").animate([
+    { opacity: 0, transform: "translateY(14px)" }, { opacity: 1, transform: "none" }
+  ], { duration: 520, delay: 640, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" });
+  $("dday").animate([
+    { opacity: 0, transform: "translateY(10px) scale(.85)" },
+    { opacity: 1, transform: "translateY(-2px) scale(1.04)", offset: .6 },
+    { opacity: 1, transform: "none" }
+  ], { duration: 520, delay: 820, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" });
+  $("cue").animate([{ opacity: 0 }, { opacity: .92 }], { duration: 500, delay: 1500, easing: "ease-out", fill: "forwards" });
+
+  /* 펭귄: 아래에서 뿅 */
+  await wait(820);
+  if (id !== run) return;
+  const img = $("penguin").querySelector("img");
+  const jump = img.animate([
+    { transform: "translateY(115%) scale(1, 1)" },
+    { transform: "translateY(-6%) scale(.94, 1.08)", offset: .45 },
+    { transform: "translateY(16%) scale(1.06, .93)", offset: .7 },
+    { transform: "translateY(12%) scale(.99, 1.02)", offset: .86 },
+    { transform: "translateY(14%) scale(1, 1)" }
+  ], { duration: 760, easing: "cubic-bezier(.33,1,.68,1)", fill: "forwards" });
+  $("popMarks").animate([
+    { opacity: 0, transform: "scale(.4)" }, { opacity: 1, transform: "scale(1.1)", offset: .4 }, { opacity: 0, transform: "scale(1.25)" }
+  ], { duration: 520, delay: 300, easing: "ease-out", fill: "forwards" });
+  await wait(780);
+  if (id !== run) return;
+  img.style.transform = "translateY(14%)";
+  jump.cancel();
+  $("penguin").classList.add("settled");
+  await wait(500);
+  if (id === run) $("replay").classList.add("show");
+}
+
+/* ===== D-N 배지 (한국 날짜 기준, ?today=YYYY-MM-DD 로 확인 가능) ===== */
+(function () {
+  const p = new URLSearchParams(location.search).get("today");
+  let y, m, d;
+  if (p && /^\d{4}-\d{2}-\d{2}$/.test(p)) { [y, m, d] = p.split("-").map(Number); }
+  else { const k = new Date(Date.now() + 9 * 3600e3); y = k.getUTCFullYear(); m = k.getUTCMonth() + 1; d = k.getUTCDate(); }
+  const day = (a, b, c) => Date.UTC(a, b - 1, c) / 864e5;
+  const t = day(y, m, d), start = day(2026, 11, 23), end = day(2026, 11, 27);
+  const L = $("ddayLabel"), V = $("ddayValue");
+  if (t < start) { L.textContent = "투표 시작까지"; V.textContent = `D-${start - t}`; }
+  else if (t < end) { L.textContent = "투표 마감까지"; V.textContent = `D-${end - t}`; }
+  else if (t === end) { L.textContent = "오늘 마감!"; V.textContent = "D-DAY"; }
+  else { L.textContent = "투표가 마감되었습니다"; V.remove(); $("dday").classList.add("closed"); }
+})();
+
+/* 검토용 다시 보기 버튼: 주소 끝에 ?review 를 붙였을 때만 보임 */
+if (new URLSearchParams(location.search).has("review")) $("replay").hidden = false;
+$("replay").addEventListener("click", play);
+window.addEventListener("load", play);
+
+/* ===== 후보 데이터 — 순서 = 화면 순서. 절대 정렬하지 않음 =====
+   cards: 1~2개. source: "뉴스룸" 또는 "매거진K". image: 썸네일 경로(비우면 임시 그래픽)
+   원본: 2026_교보생명_10대뉴스_투표항목.xlsx (2026.11.16 기준) */
+const CANDIDATES = [
+  {
+    "title": "고객의 내일을 지켜주는 금융 선도 기업…Vision2030 선포",
+    "desc": [
+      "‘보험, 그 이상의 가치로 고객의 내일을 지켜주는 금융 선도 기업’을 향한 새로운 도약의 방향 제시"
+    ],
+    "cards": []
+  },
+  {
+    "title": "“진심의 동행” 꼬옥 패밀리로 생명보험의 가치 내재화",
+    "desc": [
+      "꼬옥 패밀리에 담긴 상부상조 정신과 고객보장 약속",
+      "임직원·FP의 이해와 공감으로 ‘진심의 동행’ 내재화"
+    ],
+    "cards": [
+      {
+        "title": "교보생명, 캐릭터 ‘꼬옥’ 론칭… “끝까지 꼬옥 함께 할게요”",
+        "url": "https://news.kyobo.com/교보생명-캐릭터-꼬옥-론칭/",
+        "image": "assets/thumbs/item02-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "마라톤과 꼬옥이에 담은 생명보험의 가치",
+        "url": "https://news.kyobo.com/%ea%b5%90%eb%b3%b4%eb%a1%9c%eb%9f%b0-%ea%bc%ac%ec%98%a5-%ea%b3%a0%ea%b0%9d%eb%b3%b4%ec%9e%a5/",
+        "image": "assets/thumbs/item02-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "라이프플래닛·교보자산운용·SBI…종합금융사 도약 속도",
+    "desc": [
+      "라이프플래닛 합병 추진·교보자산운용 완전자회사화·교보SBI 사명 변경",
+      "보험·자산운용·은행을 아우르는 금융 포트폴리오 확대"
+    ],
+    "cards": [
+      {
+        "title": "교보생명, 라이프플래닛 흡수합병…13년간 쌓은 디지털 역량으로 보험 혁신 가속",
+        "url": "https://news.kyobo.com/교보생명-라플-흡수합병-디지털-역량으로-보험-혁신/",
+        "image": "assets/thumbs/item03-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "교보생명, 국내 1위 SBI저축은행 인수 승인…종합금융그룹 도약",
+        "url": "https://news.kyobo.com/교보생명-sbi저축은행-인수-종합금융그룹-도약/",
+        "image": "assets/thumbs/item03-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "고객의 페이스메이커, FP와 함께한 ‘교보로런’ 동행 레이스",
+    "desc": [
+      "전국 5개 도시에서 고객과 FP가 함께 달린 교보로런",
+      "인생의 페이스메이커와 나눈 ‘고객보장 완주’의 가치"
+    ],
+    "cards": [
+      {
+        "title": "기록보다 완주, 완주보다 동행! 2026 교보로런 현장을 가다",
+        "url": "https://news.kyobo.com/기록보다-동행-2026-교보로런-현장을-가다/",
+        "image": "assets/thumbs/item04-1.png",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "교보생명 신창재, ‘마라톤’에 주목 “생명보험, 고객의 인생 마라톤에 페이스 메이커 역할 해야”",
+        "url": "https://news.kyobo.com/신창재-마라톤에-주목-생명보험-고객의-인생-마라톤/",
+        "image": "assets/thumbs/item04-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "수수료 분급제에 선제적 대응…농부형 설계사와 ‘고객보장 완주’",
+    "desc": [
+      "장기정착 우수FP 확대를 위한 리크루팅 지원 강화",
+      "생애설계 전문가로의 성장을 돕는 양성교육 체계 확충"
+    ],
+    "cards": [
+      {
+        "title": "고객보장 완주, 신창재가 ‘농부형 설계사’를 강조한 이유",
+        "url": "https://news.kyobo.com/신창재-고객보장-완주/",
+        "image": "assets/thumbs/item05-1.png",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "신창재 의장, 경영철학과 생명보험 이야기",
+        "url": "https://news.kyobo.com/신창재-의장-경영철학/",
+        "image": "assets/thumbs/item05-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "“완전가입” 상품 P/F 다각화 및 가입 프로세스 혁신",
+    "desc": [
+      "치매·간병·건강·종신으로 넓힌 상품 라인업",
+      "데이터 기반 가입심사·스마트폰 청약 개선으로 완전가입 지원"
+    ],
+    "cards": [
+      {
+        "title": "“낸 보험료 돌려받아도 사망보장은 그대로”…교보생명, 교보모두지킴종신보험 출시",
+        "url": "https://news.kyobo.com/보험료-돌려받아도-사망보장-그대로-교보모두지킴/",
+        "image": "assets/thumbs/item06-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "〈꼬옥의 보물상자〉 EP.04 선한 이웃을 위한 약속의 울타리, 가입심사팀 편",
+        "url": "https://www.magazine-k.co.kr/Archives/1091",
+        "image": "assets/thumbs/item06-2.png",
+        "source": "매거진K"
+      }
+    ]
+  },
+  {
+    "title": "더 진화한 평생든든서비스, FP와 함께 ‘완전유지’ 실천한다",
+    "desc": [
+      "보장유지 경보제도·건강활동 프로그램·이어드림 캠페인",
+      "보장 중단 예방부터 건강관리·실효계약 부활까지 넓어진 평생든든서비스"
+    ],
+    "cards": [
+      {
+        "title": "교보생명, 보험 가입 후 건강관리까지 돕는다… ‘평생든든서비스’ 건강활동 프로그램 론칭",
+        "url": "https://news.kyobo.com/교보생명-평생든든서비스-건강활동-프로그램-론칭/",
+        "image": "assets/thumbs/item07-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "〈꼬옥의 보물상자〉 EP.05 모두가 보험의 혜택을 받을 수 있게! 보장유지지원팀 편",
+        "url": "https://www.magazine-k.co.kr/Archives/1100",
+        "image": "assets/thumbs/item07-2.jpg",
+        "source": "매거진K"
+      }
+    ]
+  },
+  {
+    "title": "“정당보험금 지급” 신속 정확한 지급 마케팅으로 고객보장 완성",
+    "desc": [
+      "앱으로 만나는 실손24·청구서류 간소화·상세한 지급내역 안내",
+      "더 편리한 청구와 신속·정확한 지급으로 고객보장 완성"
+    ],
+    "cards": [
+      {
+        "title": "교보생명, 보험금 지급까지 2시간… 생보업계 지급속도 1위",
+        "url": "https://news.kyobo.com/교보생명-보험금-지급속도-1위/",
+        "image": "assets/thumbs/item08-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "〈꼬옥의 보물상자〉 EP.06 소중한 약속이 바르게 지켜지도록, 지급심사팀 편",
+        "url": "https://www.magazine-k.co.kr/Archives/1111",
+        "image": "assets/thumbs/item08-2.jpg",
+        "source": "매거진K"
+      }
+    ]
+  },
+  {
+    "title": "고객 목소리에서 출발한 상품 혁신…5개 급부 배타적사용권 쾌거!",
+    "desc": [
+      "심폐소생술·뇌졸중 집중치료실 보장부터 복합심사까지",
+      "보장 공백과 가입 부담을 줄인 상품 혁신, 배타적사용권 5건 획득"
+    ],
+    "cards": [
+      {
+        "title": "교보생명, ‘교보K-맞춤건강보험’ 6개월 배타적사용권 획득",
+        "url": "https://news.kyobo.com/교보k-맞춤건강보험-6개월-배타적사용권-획득/",
+        "image": "assets/thumbs/item09-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "교보생명, 업계 최초 뇌졸중 집중치료실 특약…6개월 배타적사용권 획득",
+        "url": "https://news.kyobo.com/교보생명-뇌졸중-집중치료실-특약-배타적사용권-획/",
+        "image": "assets/thumbs/item09-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "한층 진화한 영업지원, FP 활동에 힘을 더하다",
+    "desc": [
+      "AI 코칭 지원·FP AI 교육·모바일 보장분석 개선",
+      "FP 전용 뉴스룸까지, 고객 상담과 소통을 돕는 디지털 지원 확대"
+    ],
+    "cards": []
+  },
+  {
+    "title": "고객과의 약속을 지키는 힘! 업계 최고 신용등급 획득",
+    "desc": [
+      "무디스 A1 12년·피치 A+ 14년 연속, 국내 3대 신용평가사 AAA",
+      "고객과의 오랜 약속을 뒷받침하는 재무건전성과 보험금 지급능력"
+    ],
+    "cards": [
+      {
+        "title": "교보생명, 14년 연속 피치 ‘A+’ 획득… 국내 생보사 중 최장기 유지",
+        "url": "https://news.kyobo.com/교보생명-14년-연속-최고-신용등급-획득/",
+        "image": "assets/thumbs/item11-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "교보생명, 12년 연속 무디스 ‘A1’ 획득…국내 생보사 최고 등급",
+        "url": "https://news.kyobo.com/교보생명-12년-연속-무디스-a1-획득/",
+        "image": "assets/thumbs/item11-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "이해관계자 공동 성장, 지속가능경영 내일을 향한 발걸음",
+    "desc": [
+      "금융소비자 보호·금융 접근성 개선 등 ESG 실천과 성과 공유",
+      "지속가능경영보고서에 담은 ‘모든 이해관계자와의 공동발전’"
+    ],
+    "cards": [
+      {
+        "title": "교보생명, 16번째 지속가능경영보고서…“금융소비자 보호와 포용성 개선”",
+        "url": "https://news.kyobo.com/지속경영가능보고서-발행/",
+        "image": "assets/thumbs/item12-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "교보생명 4년 연속 ‘가장 존경받는 기업’…”고객 보장 실천에 앞장”",
+        "url": "https://news.kyobo.com/%ea%b5%90%eb%b3%b4%ec%83%9d%eb%aa%85-%ea%b0%80%ec%9e%a5-%ec%a1%b4%ea%b2%bd%eb%b0%9b%eb%8a%94-%ea%b8%b0%ec%97%85-%ec%84%a0%ec%a0%95/",
+        "image": "assets/thumbs/item12-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "CSM경영 대전환…효율적인 비즈니스 자원 배분으로 지속 성장 기반 다져",
+    "desc": [
+      "CSM전략팀 신설·총CSM 관리체계 구축 추진·전사 교육 강화",
+      "효율적인 자원 배분과 미래 이익 기반 확충을 위한 CSM 중심 경영"
+    ],
+    "cards": [
+      {
+        "title": "K-김밥 열풍인데… 김밥집이 사라진다 | 비용 효율화가 필요한 이유",
+        "url": "https://www.magazine-k.co.kr/Archives/1095",
+        "image": "assets/thumbs/item13-1.jpg",
+        "source": "매거진K"
+      },
+      {
+        "title": "교보생명이 생각하는 고객보장완주와 CSM의 상관관계",
+        "url": "https://news.kyobo.com/csm-보험계약서비스마진/",
+        "image": "assets/thumbs/item13-2.png",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "광화문을 넘어 세계로! BTS와 함께 응원 메시지 전해",
+    "desc": [
+      "광화문글판과 BTS가 함께 선보인 본사 외벽 초대형 래핑",
+      "더 넓은 세상을 향한 도전에 보내는 희망과 격려"
+    ],
+    "cards": [
+      {
+        "title": "도심 속 K-컬처의 아름다움… ‘광화문글판X방탄소년단 특별편’",
+        "url": "https://news.kyobo.com/2026-광화문글판-방탄소년단-특별편/",
+        "image": "assets/thumbs/item14-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "교보생명 광화문글판, 방탄소년단과 함께 시민들에게 희망·격려를 전하다",
+        "url": "https://news.kyobo.com/%ea%b5%90%eb%b3%b4%ec%83%9d%eb%aa%85-%ea%b4%91%ed%99%94%eb%ac%b8%ea%b8%80%ed%8c%90-%eb%b0%a9%ed%83%84%ec%86%8c%eb%85%84%eb%8b%a8-%eb%9e%98%ed%95%91/",
+        "image": "assets/thumbs/item14-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "1cm의 문턱, 우리동네 무장애지도 탐사대 론칭",
+    "desc": [
+      "임직원이 직접 살핀 문턱·경사로·출입구, 지도에 담은 무장애 정보",
+      "이동약자의 헛걸음을 줄이는 ‘우리동네 무장애지도 탐사대’"
+    ],
+    "cards": [
+      {
+        "title": "작은 실천이 모인 자리, 제4회 지구하다 페스티벌",
+        "url": "https://news.kyobo.com/%ec%9e%91%ec%9d%80-%ec%8b%a4%ec%b2%9c%ec%9d%b4-%eb%aa%a8%ec%9d%b8-%ec%9e%90%eb%a6%ac-%ec%a0%9c4%ed%9a%8c-%ec%a7%80%ea%b5%ac%ed%95%98%eb%8b%a4-%ed%8e%98%ec%8a%a4%ed%8b%b0%eb%b2%8c/",
+        "image": "assets/thumbs/item15-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "“낮은 문턱 하나가 누군가에겐 장벽” 교보생명, 장애인·휠체어 이용자 위한 무장애 지도 제작",
+        "url": "https://news.kyobo.com/장애인-휠체어-이용자-위한-무장애-지도/",
+        "image": "assets/thumbs/item15-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  },
+  {
+    "title": "도메인 인재가 이끄는 AX, 일하는 방식을 바꾸다",
+    "desc": [
+      "AI 업무혁신 사례 공모전·집현전·교보 이노베이션 어워드",
+      "현장의 아이디어와 전문성에서 시작하는 일하는 방식의 변화"
+    ],
+    "cards": []
+  },
+  {
+    "title": "“우리 지원단은 그린리본 맛집” 금융소비자보호 실천력 강화",
+    "desc": [
+      "소비자보호 행동강령 선포·우수기관 ‘그린리본’ 인증제 도입",
+      "‘올바른데이’와 함께 일상으로 이어가는 금융소비자보호 실천"
+    ],
+    "cards": [
+      {
+        "title": "고객 안내부터 민원 해결까지, 소비자보호 체계 강화",
+        "url": "https://news.kyobo.com/고객-안내부터-민원-해결까지-소비자보호-체계-강화/",
+        "image": "assets/thumbs/item17-1.jpg",
+        "source": "뉴스룸"
+      },
+      {
+        "title": "교보생명, 전 임직원에 금융소비자보호 DNA 심는다",
+        "url": "https://news.kyobo.com/교보생명-전-임직원에-금융소비자보호-dna-심는다/",
+        "image": "assets/thumbs/item17-2.jpg",
+        "source": "뉴스룸"
+      }
+    ]
+  }
+];
+
+function withUtm(url, content) {
+  const utm = `utm_source=10news_landing&utm_medium=qr&utm_campaign=2026_10news&utm_content=${content}`;
+  return url + (url.includes("?") ? "&" : "?") + utm;
+}
+const esc = s => String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+
+$("cands").innerHTML = CANDIDATES.map((c, i) => {
+  const n = String(i + 1).padStart(2, "0");
+  const cards = c.cards.map((card, k) => {
+    const isNews = card.source === "뉴스룸";
+    const media = card.image
+      ? `<img src="${esc(card.image)}" alt="" loading="lazy">`
+      : `<span class="ph-num stk" aria-hidden="true">${n}</span><span class="ph-tag">썸네일 이미지</span>`;
+    return `
+        <a class="card rv" style="--d:${0.2 + k * 0.08}s" href="${esc(withUtm(card.url, "item" + n))}" target="_blank" rel="noopener">
+          <div class="thumb${card.image ? " has-img" : ""}">${media}</div>
+          <p class="card-title">${esc(card.title)}</p>
+          <span class="src ${isNews ? "newsroom" : "webzine"}">${esc(card.source)}</span>
+        </a>`;
+  }).join("");
+  return `
+    <section class="cand${c.cards.length ? "" : " slim"}" id="cand-${n}" data-i="${i}" aria-labelledby="cand-${n}-t">
+      <div class="cand-in">
+        <div class="cand-head" aria-hidden="true"><p class="num stk pop">${n}</p><span class="of">/ 17</span></div>
+        <h2 class="rv" id="cand-${n}-t" style="--d:.08s"><span class="sr">후보 ${n}. </span>${esc(c.title)}</h2>
+        <ul class="rv" style="--d:.14s">${c.desc.map(d => `<li>${esc(d)}</li>`).join("")}</ul>
+        <div class="cards">${cards}</div>
+      </div>
+    </section>`;
+}).join("");
+document.querySelectorAll("a[data-base]").forEach(a => { a.href = withUtm(a.dataset.base, a.dataset.utm); });
+
+/* ===== 진행 선 ===== */
+const candEls = [...document.querySelectorAll(".cand")];
+function onScroll() {
+  const mid = innerHeight * 0.45;
+  let cur = -1;
+  candEls.forEach((s, i) => { if (s.getBoundingClientRect().top <= mid) cur = i; });
+  const show = cur >= 0 && $("finale").getBoundingClientRect().top > mid;
+  $("progress").classList.toggle("on", show);
+  if (cur >= 0) {
+    $("progressCount").textContent = `${String(cur + 1).padStart(2, "0")} / 17`;
+    $("progressFill").style.transform = `scaleX(${(cur + 1) / 17})`;
+  }
+}
+let ticking = false;
+addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { onScroll(); ticking = false; }); } }, { passive: true });
+onScroll();
+
+/* ===== 안내 문구 타이핑 + 섹션 진입 ===== */
+async function typeGuide() {
+  const el = $("gline"), typed = el.querySelector(".typed"), text = el.querySelector(".ghost").textContent;
+  const c = document.createElement("span"); c.className = "caret";
+  typed.appendChild(c);
+  for (const f of frames(text)) {
+    typed.firstChild.nodeType === 3 ? typed.firstChild.textContent = f : typed.prepend(document.createTextNode(f));
+    await wait(f.endsWith("\n") ? 160 : f.endsWith(" ") ? 80 : 36 + Math.random() * 24);
+  }
+  c.className = "caret idle";
+  await wait(1400);
+  c.className = "caret off";
+}
+const gTyped = $("gline").querySelector(".typed");
+if (reduce || !("IntersectionObserver" in window)) {
+  gTyped.textContent = $("gline").querySelector(".ghost").textContent;
+} else {
+  document.documentElement.classList.add("motion");
+  let typedOnce = false;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in");
+    if (e.target.id === "guide" && !typedOnce) { typedOnce = true; typeGuide(); }
+    io.unobserve(e.target);
+  }), { threshold: 0.25 });
+  document.querySelectorAll(".guide, .cand, .finale").forEach(s => io.observe(s));
+}
+</script>
+<script type="module">
+/* ===== 진짜 3D 제목: Paperlogy Black 글자 11개만 뽑은 3D 글꼴 데이터 ===== */
+import * as THREE from "three";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+const FONT = {"glyphs":{"0":{"ha":600,"x_min":-5,"x_max":605,"o":"m 300 -13 q 143 29.5 212 -13 q 34.5 154 74 72 q -5 350 -5 236 l -5 350 q 34.5 546 -5 464 q 143 670.5 74 628 q 300 713 212 713 l 300 713 q 457.5 670.5 388 713 q 566 546 527 628 q 605 350 605 464 l 605 350 q 566 154 605 236 q 457.5 29.5 527 72 q 300 -13 388 -13 l 300 -13 m 300 141 q 388 191 356 141 q 420 350 420 241 l 420 350 q 388 509 420 459 q 300 559 356 559 l 300 559 q 212.5 509 244 559 q 181 350 181 459 l 181 350 q 212.5 191 181 241 q 300 141 244 141 l 300 141"},"1":{"ha":600,"x_min":107,"x_max":424,"o":"m 424 700 l 424 0 l 241 0 l 241 554 l 107 554 l 107 700 l 424 700"},"2":{"ha":600,"x_min":-1,"x_max":572,"o":"m 572 149 l 572 0 l 34 0 l 34 119 l 299 366 q 353 430.5 339 403 q 367 484 367 458 l 367 484 q 341.5 540.5 367 521 q 267 560 316 560 l 267 560 q 191.5 543 226 560 q 133 492 157 526 l 133 492 l -1 577 q 115.5 676.5 41 640 q 285 713 190 713 l 285 713 q 424.5 687.5 364 713 q 518 614 485 662 q 551 502 551 566 l 551 502 q 527 394 551 445 q 434 280 503 343 l 434 280 l 291 149 l 572 149"},"6":{"ha":600,"x_min":7,"x_max":598,"o":"m 355 444 q 477.5 416.5 422 444 q 565.5 339 533 389 q 598 224 598 289 l 598 224 q 562 99 598 153 q 464 16 526 45 q 326 -13 402 -13 l 326 -13 q 92.5 76.5 178 -13 q 7 333 7 166 l 7 333 q 53 538 7 452 q 182 668.5 99 624 q 373 713 265 713 l 373 713 q 484.5 700 431 713 q 575 663 538 687 l 575 663 l 508 529 q 378 565 455 565 l 378 565 q 266 534.5 312 565 q 201 446 220 504 l 201 446 q 191 399 197 431 l 191 399 q 355 444 257 444 l 355 444 m 316 123 q 391 148 362 123 q 420 215 420 173 l 420 215 q 391 283 420 258 q 315 308 362 308 l 315 308 q 238 282 268 308 q 208 215 208 256 l 208 215 q 236.5 148 208 173 q 316 123 265 123 l 316 123"},"교":{"ha":792,"x_min":25,"x_max":766,"o":"m 564 563 l 61 563 l 61 719 l 730 719 l 730 213 l 564 213 l 564 563 m 766 146 l 766 -10 l 25 -10 l 25 146 l 127 146 l 127 401 l 292 401 l 292 146 l 347 146 l 347 401 l 511 401 l 511 146 l 766 146"},"보":{"ha":792,"x_min":25,"x_max":766,"o":"m 766 150 l 766 -10 l 25 -10 l 25 150 l 314 150 l 314 250 l 62 250 l 62 718 l 223 718 l 223 632 l 569 632 l 569 718 l 729 718 l 729 250 l 478 250 l 478 150 l 766 150 m 223 403 l 569 403 l 569 481 l 223 481 l 223 403"},"생":{"ha":792,"x_min":22,"x_max":765,"o":"m 560 313 l 410 313 l 410 731 l 560 731 l 560 622 l 607 622 l 607 734 l 759 734 l 759 288 l 607 288 l 607 465 l 560 465 l 560 313 m 231 424 q 137.5 327.5 192 361 q 22 296 83 294 l 22 296 l 22 449 q 84 485.5 55 452 q 131 581.5 113 519 q 149 729 149 644 l 149 729 l 302 723 q 287 573 302 648 l 287 573 l 440 425 l 337 317 l 231 424 m 417 291 q 671 251 577 291 q 765 122 765 211 l 765 122 q 670.5 -5.5 765 35 q 417 -46 576 -46 l 417 -46 q 164.5 -5.5 259 -46 q 70 122 70 35 l 70 122 q 164 251 70 211 q 417 291 258 291 l 417 291 m 417 87 q 591 122 591 87 l 591 122 q 417 157 591 157 l 417 157 q 243 122 243 157 l 243 122 q 417 87 243 87 l 417 87"},"명":{"ha":792,"x_min":42,"x_max":748,"o":"m 582 373 l 517 373 l 517 519 l 582 519 l 582 555 l 517 555 l 517 701 l 582 701 l 582 734 l 741 734 l 741 312 l 582 312 l 582 373 m 485 338 l 42 338 l 42 728 l 485 728 l 485 338 m 325 588 l 202 588 l 202 478 l 325 478 l 325 588 m 409 305 q 656 264 564 305 q 748 130 748 223 l 748 130 q 656 -4.5 748 37 q 409 -46 564 -46 l 409 -46 q 162.5 -4.5 254 -46 q 71 130 71 37 l 71 130 q 162.5 263.5 71 222 q 409 305 254 305 l 409 305 m 409 90 q 529 99.5 484 90 q 574 130 574 109 l 574 130 q 529 159.5 574 150 q 409 169 484 169 l 409 169 q 291 159.5 335 169 q 247 130 247 150 l 247 130 q 409 90 247 90 l 409 90"},"대":{"ha":792,"x_min":36,"x_max":759,"o":"m 759 734 l 759 -34 l 607 -34 l 607 298 l 564 298 l 564 -21 l 415 -21 l 415 731 l 564 731 l 564 460 l 607 460 l 607 734 l 759 734 m 217 148 q 307.5 154.5 260 148 q 387 173 355 161 l 387 173 l 387 26 q 304 6 356 13 q 203 -1 252 -1 l 203 -1 l 36 -1 l 36 719 l 355 719 l 355 570 l 191 570 l 191 148 l 217 148"},"뉴":{"ha":792,"x_min":25,"x_max":766,"o":"m 729 359 l 65 359 l 65 732 l 232 732 l 232 516 l 729 516 l 729 359 m 766 144 l 620 144 l 620 -52 l 458 -52 l 458 144 l 334 144 l 334 -52 l 172 -52 l 172 144 l 25 144 l 25 301 l 766 301 l 766 144"},"스":{"ha":792,"x_min":25,"x_max":773,"o":"m 393 431 q 236.5 292.5 328 342 q 40 242 145 243 l 40 242 l 40 404 q 175 446.5 111 405 q 282 564 239 488 q 336 739 325 640 l 336 739 l 501 713 q 465 565 491 627 l 465 565 l 773 376 l 687 237 l 393 431 m 25 150 l 766 150 l 766 -10 l 25 -10 l 25 150"}},"familyName":"Paperlogy","ascender":880,"descender":-180,"underlinePosition":-90,"underlineThickness":45,"boundingBox":{"yMin":-235,"xMin":-523,"yMax":1001,"xMax":1773},"resolution":900,"original_font_information":{"format":0,"fontFamily":"Paperlogy","fontSubfamily":"Black"},"cssFontWeight":"900","cssFontStyle":"normal"};
+try {
+  const canvas = document.getElementById("title3d");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(-3, 5, 6); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xbfe8b4, 0.9); rim.position.set(5, -2, 3); scene.add(rim);
+
+  const font = new FontLoader().parse(FONT);
+  const front = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const side = new THREE.MeshStandardMaterial({ color: 0xd9eed3, roughness: 0.55, metalness: 0 });
+  const group = new THREE.Group(); scene.add(group);
+  const GAP = 1.16, LINES = ["2026", "교보생명", "10대뉴스"];
+  let maxW = 0;
+  const pivots = LINES.map((t, i) => {
+    const geo = new TextGeometry(t, { font, size: 1, height: 0.36, curveSegments: 10, bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.028, bevelSegments: 3 });
+    geo.computeBoundingBox();
+    const b = geo.boundingBox;
+    maxW = Math.max(maxW, b.max.x - b.min.x);
+    geo.translate(-(b.max.x + b.min.x) / 2, 0, -0.18);
+    const pivot = new THREE.Group();
+    pivot.position.y = -i * GAP;
+    pivot.add(new THREE.Mesh(geo, [front, side]));
+    group.add(pivot);
+    return pivot;
+  });
+  const top = 0.82, bottom = -2 * GAP - 0.08;
+  group.position.y = -(top + bottom) / 2;
+
+  function fit() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    const v = THREE.MathUtils.degToRad(camera.fov) / 2;
+    const zW = (maxW * 1.34 / 2) / (Math.tan(v) * camera.aspect);
+    const zH = ((top - bottom) * 1.42 / 2) / Math.tan(v);
+    camera.position.set(0, 0, Math.max(zW, zH));
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(() => { fit(); draw(); }).observe(canvas);
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const DELAYS = [80, 230, 380], DUR = 900;
+  let mode = "idle", t0 = 0, raf = 0, onScreen = true;
+  const backOut = x => { const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+
+  function pose(now) {
+    const el = now - t0;
+    pivots.forEach((p, i) => {
+      const k = Math.min(1, Math.max(0, (el - DELAYS[i]) / DUR));
+      p.visible = mode === "final" || k > 0;
+      const e = mode === "final" ? 1 : backOut(k);
+      p.rotation.x = (1 - e) * -Math.PI / 2;
+      p.position.z = (1 - e) * -0.6;
+    });
+    /* 다 일어선 뒤 천천히 좌우로 돌며 옆면을 보여줌 */
+    const sway = mode === "final" ? 1 : Math.min(1, Math.max(0, (el - 1300) / 1600));
+    const t = now / 1000;
+    group.rotation.y = sway * 0.34 * Math.sin(t * 0.7);
+    group.rotation.x = 0.04 + sway * 0.05 * Math.sin(t * 0.5);
+  }
+  function draw() { renderer.render(scene, camera); }
+  function loop(now) {
+    raf = 0;
+    if (mode === "idle") return;
+    pose(now); draw();
+    if (onScreen && !reduce) raf = requestAnimationFrame(loop);
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(loop); }
+  new IntersectionObserver(es => { onScreen = es[0].isIntersecting; if (onScreen) kick(); }).observe(canvas);
+
+  window.title3d = {
+    play() { mode = "play"; t0 = performance.now(); if (reduce) { mode = "final"; group.rotation.set(0.04, -0.22, 0); pivots.forEach(p => { p.visible = true; p.rotation.x = 0; p.position.z = 0; }); draw(); } else kick(); },
+    reset() { mode = "idle"; pivots.forEach(p => p.visible = false); group.rotation.set(0.04, 0, 0); draw(); },
+    showFinal() { mode = "final"; t0 = performance.now(); pivots.forEach(p => { p.visible = true; p.rotation.x = 0; p.position.z = 0; }); if (reduce) { group.rotation.set(0.04, -0.22, 0); draw(); } else kick(); }
+  };
+  pivots.forEach(p => p.visible = false);
+  fit();
+  document.documentElement.classList.add("has-3d");
+} catch (err) {
+  console.warn("3D 제목을 불러오지 못해 HTML 글자로 표시합니다.", err);
+}
+</script>
+</body>
+</html>
