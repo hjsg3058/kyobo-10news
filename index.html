@@ -151,27 +151,27 @@
   .s-year, .s-kyobo, .s-news {
     font-size: clamp(50px, 15.6vw, 74px);
     text-shadow:
-      0.50px 1.10px 0 rgb(201,227,194),
-      0.99px 2.20px 0 rgb(186,217,178),
-      1.49px 3.30px 0 rgb(170,206,163),
-      1.98px 4.40px 0 rgb(155,196,147),
-      2.48px 5.50px 0 rgb(140,185,132),
-      2.97px 6.60px 0 rgb(124,175,116),
-      3.47px 7.70px 0 rgb(109,164,100),
-      3.96px 8.80px 0 rgb(93,154,85),
-      4.46px 9.90px 0 rgb(78,143,69),
-      0 13px 6px rgba(15,50,15,.2),
-      0 24px 28px rgba(15,50,15,.24);
+      0.50px 1.10px 0 rgb(42,79,138),
+      0.99px 2.20px 0 rgb(38,74,131),
+      1.49px 3.30px 0 rgb(35,69,124),
+      1.98px 4.40px 0 rgb(31,64,116),
+      2.48px 5.50px 0 rgb(27,59,109),
+      2.97px 6.60px 0 rgb(23,53,102),
+      3.47px 7.70px 0 rgb(20,48,95),
+      3.96px 8.80px 0 rgb(16,43,87),
+      4.46px 9.90px 0 rgb(12,38,80),
+      0 13px 6px rgba(10,30,60,.2),
+      0 24px 28px rgba(10,30,60,.24);
   }
   .s-date {
     margin-top: 5.5%;
     font-size: clamp(16px, 4.9vw, 22px);
     letter-spacing: 0;
     text-shadow:
-      0.45px 1.00px 0 rgb(201,227,194),
-      0.90px 2.00px 0 rgb(148,193,140),
-      1.35px 3.00px 0 rgb(94,158,85),
-      0 6px 8px rgba(15,50,15,.2);
+      0.45px 1.00px 0 rgb(42,79,138),
+      0.90px 2.00px 0 rgb(31,67,124),
+      1.35px 3.00px 0 rgb(19,54,109),
+      0 6px 8px rgba(10,30,60,.2);
   }
   .board-foot {
     position: absolute;
@@ -1182,11 +1182,12 @@ try {
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
   scene.add(new THREE.AmbientLight(0xffffff, 0.75));
   const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(-3, 5, 6); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xbfe8b4, 0.9); rim.position.set(5, -2, 3); scene.add(rim);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.6); rim.position.set(5, -2, 3); scene.add(rim);
 
   const font = new FontLoader().parse(FONT);
   const front = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  const side = new THREE.MeshStandardMaterial({ color: 0xd9eed3, roughness: 0.55, metalness: 0 });
+  /* 옆면(두께): 페이지 남색 #13366D */
+  const side = new THREE.MeshStandardMaterial({ color: 0x13366d, roughness: 0.6, metalness: 0 });
   const group = new THREE.Group(); scene.add(group);
   const GAP = 1.16, LINES = ["2026", "교보생명", "10대뉴스"];
   let maxW = 0;
