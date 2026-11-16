@@ -1178,8 +1178,6 @@ try {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
   /* 주변 반사: 실내 조명 환경 → 회전 각도에 따라 하이라이트와 반사가 움직임 */
@@ -1189,18 +1187,8 @@ try {
   scene.add(new THREE.HemisphereLight(0xffffff, 0x4dbd38, 0.55));
   const key = new THREE.DirectionalLight(0xffffff, 2.1);
   key.position.set(-2.2, 3.2, 8);
-  key.castShadow = true;
-  key.shadow.mapSize.set(512, 512);
-  Object.assign(key.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 0.5, far: 25 });
-  key.shadow.bias = -0.0005;
-  key.shadow.normalBias = 0.02;
   scene.add(key);
   const rim = new THREE.DirectionalLight(0xffffff, 0.5); rim.position.set(5, -2, 3); scene.add(rim);
-  /* 글자 뒤 보이지 않는 판: 그림자만 받아서 초록 바탕 위에 떨어뜨림 */
-  const catcher = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), new THREE.ShadowMaterial({ opacity: 0.17 }));
-  catcher.position.z = -1.2;
-  catcher.receiveShadow = true;
-  scene.add(catcher);
 
   const font = new FontLoader().parse(FONT);
   /* 앞면: 흰색, 살짝 광택 (빛을 받아 회전에 따라 밝기가 변함) */
@@ -1219,8 +1207,6 @@ try {
     const pivot = new THREE.Group();
     pivot.position.y = -i * GAP;
     const mesh = new THREE.Mesh(geo, [front, side]);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
     pivot.add(mesh);
     group.add(pivot);
     return pivot;
