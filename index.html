@@ -299,7 +299,9 @@
     align-items: center;
     padding: 72px 28px;
   }
-  .guide-in { width: 100%; max-width: 420px; margin: 0 auto; }
+  .guide-in { width: 100%; max-width: 420px; margin: 0 auto; text-align: center; }
+  /* 이지모아 강조: 남색 글자 + 초록 형광펜 */
+  .hl { background: linear-gradient(transparent 58%, #BFE8B4 58%, #BFE8B4 92%, transparent 92%); padding: 0 .06em; }
   .g-title {
     font-size: clamp(32px, 9.4vw, 42px);
     font-weight: 800;
@@ -493,7 +495,7 @@
           <p class="sticker s-date">11월 23일 (월) ~ 11월 27일 (금)</p>
         </div>
         <div class="board-foot">
-          <p class="dday" id="dday" role="status" style="margin:0"><span class="dday-label" id="ddayLabel">투표 시작까지</span><span class="dday-value" id="ddayValue">D-N</span></p>
+          <p class="dday" id="dday" role="status" style="margin:0"><span class="dday-label" id="ddayLabel">투표 마감까지</span><span class="dday-value" id="ddayValue">D-N</span></p>
           <p class="cue" id="cue" style="margin:0">아래로 넘겨 후보 17개 보기
             <svg viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 1v11M1.5 7.5 6 12l4.5-4.5"/></svg>
           </p>
@@ -513,9 +515,10 @@
   <!-- 안내 -->
   <section class="guide" id="guide" aria-labelledby="guide-title">
     <div class="guide-in">
-      <h2 class="sr" id="guide-title">아래 후보 중 10개를 골라 투표해주세요</h2>
+      <h2 class="sr" id="guide-title">아래 후보 중 10개를 골라 이지모아에서 투표해주세요</h2>
       <div class="tline g-title" id="gline" aria-hidden="true"><span class="ghost">아래 후보 중
 10개를 골라
+이지모아에서
 투표해주세요</span><span class="typed"></span></div>
       <div class="rule rv" style="--d:.1s"></div>
       <p class="rv" style="--d:.2s">후보는 모두 <b>17개</b>예요.<br>마음에 남은 뉴스 <b>10개</b>를 골라 이지모아에서 투표해주세요.</p>
@@ -756,10 +759,10 @@ async function play() {
   const day = (a, b, c) => Date.UTC(a, b - 1, c) / 864e5;
   const t = day(y, m, d), start = day(2026, 11, 23), end = day(2026, 11, 27);
   const L = $("ddayLabel"), V = $("ddayValue");
-  if (t < start) { L.textContent = "투표 시작까지"; V.textContent = `D-${start - t}`; }
-  else if (t < end) { L.textContent = "투표 마감까지"; V.textContent = `D-${end - t}`; }
+  /* 투표 시작 전에도 마감까지 남은 날로 표시 */
+  if (t < end) { L.textContent = "투표 마감까지"; V.textContent = `D-${end - t}`; }
   else if (t === end) { L.textContent = "오늘 마감!"; V.textContent = "D-DAY"; }
-  else { L.textContent = "투표가 마감되었습니다"; V.remove(); $("dday").classList.add("closed"); }
+  else { L.textContent = "투표 종료"; V.remove(); $("dday").classList.add("closed"); }
 })();
 
 /* 검토용 다시 보기 버튼: 주소 끝에 ?review 를 붙였을 때만 보임 */
@@ -1140,12 +1143,15 @@ addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimat
 onScroll();
 
 /* ===== 안내 문구 타이핑 + 섹션 진입 ===== */
+/* 타이핑된 글자에서 "이지모아"가 완성되면 형광펜 강조 */
+const guideHTML = f => esc(f).replace("이지모아", '<span class="hl">이지모아</span>');
 async function typeGuide() {
   const el = $("gline"), typed = el.querySelector(".typed"), text = el.querySelector(".ghost").textContent;
   const c = document.createElement("span"); c.className = "caret";
-  typed.appendChild(c);
+  const out = document.createElement("span");
+  typed.append(out, c);
   for (const f of frames(text)) {
-    typed.firstChild.nodeType === 3 ? typed.firstChild.textContent = f : typed.prepend(document.createTextNode(f));
+    out.innerHTML = guideHTML(f);
     await wait(f.endsWith("\n") ? 160 : f.endsWith(" ") ? 80 : 36 + Math.random() * 24);
   }
   c.className = "caret idle";
@@ -1154,7 +1160,7 @@ async function typeGuide() {
 }
 const gTyped = $("gline").querySelector(".typed");
 if (reduce || !("IntersectionObserver" in window)) {
-  gTyped.textContent = $("gline").querySelector(".ghost").textContent;
+  gTyped.innerHTML = guideHTML($("gline").querySelector(".ghost").textContent);
 } else {
   document.documentElement.classList.add("motion");
   let typedOnce = false;
