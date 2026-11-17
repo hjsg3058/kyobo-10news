@@ -401,14 +401,14 @@
   .card {
     display: grid;
     grid-template-columns: 54% 1fr;
-    grid-template-rows: 1fr auto;
+    grid-template-rows: 1fr auto auto 1fr;
     column-gap: 12px;
     align-items: start;
   }
-  .card .thumb { grid-row: 1 / span 2; align-self: center; border-width: 1.5px; border-radius: 12px; }
-  .card-title { margin: 0 0 6px; font-size: 13px; font-weight: 600; line-height: 1.38; letter-spacing: -0.03em; -webkit-line-clamp: 3; align-self: end; }
+  .card .thumb { grid-row: 1 / -1; align-self: center; border-width: 1.5px; border-radius: 12px; }
+  .card-title { margin: 0 0 6px; font-size: 13px; font-weight: 600; line-height: 1.38; letter-spacing: -0.03em; -webkit-line-clamp: 3; grid-column: 2; grid-row: 2; text-align: center; }
   .card .src { font-size: 10px; padding: 3px 7px; }
-  .card .src { justify-self: start; }
+  .card .src { grid-column: 2; grid-row: 3; justify-self: center; align-self: start; }
 
   /* ---------- 마무리 ---------- */
   .finale {
