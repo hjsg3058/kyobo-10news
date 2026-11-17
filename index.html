@@ -310,6 +310,8 @@
   }
   .guide .rule { transform: scaleX(1); margin: 28px 0 22px; }
   .guide p { margin: 0; font-size: 17px; line-height: 1.6; font-weight: 500; }
+  .guide .g-lead { font-size: clamp(17px, 4.8vw, 20px); font-weight: 600; line-height: 1.55; }
+  .guide h2.g-title { margin: 0; font-size: clamp(26px, 7.4vw, 32px); line-height: 1.4; }
   .guide p b { font-weight: 800; }
 
   /* ---------- 후보 ---------- */
@@ -328,8 +330,8 @@
   .cand.slim ul { margin-bottom: 0; }
   .cand-in { width: 100%; max-width: 432px; margin: 0 auto; }
   .cand-head { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 22px; }
-  .cand .num { font-size: 92px; line-height: .9; margin: 0; font-variant-numeric: tabular-nums; }
-  .cand .of { font-size: 17px; font-weight: 800; padding-bottom: 8px; }
+  .cand .num { font-size: 62px; line-height: .9; margin: 0; font-variant-numeric: tabular-nums; }
+  .cand .of { font-size: 15px; font-weight: 800; padding-bottom: 5px; }
   .cand h2 {
     margin: 0 0 16px;
     font-size: 30px;
@@ -515,13 +517,9 @@
   <!-- 안내 -->
   <section class="guide" id="guide" aria-labelledby="guide-title">
     <div class="guide-in">
-      <h2 class="sr" id="guide-title">아래 후보 중 10개를 골라 이지모아에서 투표해주세요</h2>
-      <div class="tline g-title" id="gline" aria-hidden="true"><span class="ghost">아래 후보 중
-10개를 골라
-이지모아에서
-투표해주세요</span><span class="typed"></span></div>
+      <p class="g-lead rv">2026년 한 해 동안 보도된 기사 중<br>후보를 선정했습니다.</p>
       <div class="rule rv" style="--d:.1s"></div>
-      <p class="rv" style="--d:.2s">후보는 모두 <b>17개</b>예요.<br>마음에 남은 뉴스 <b>10개</b>를 골라 이지모아에서 투표해주세요.</p>
+      <h2 class="g-title rv" id="guide-title" style="--d:.18s">이 중 우리 회사를 빛낸<br>10개 뉴스를 <span class="hl">이지모아</span>에서<br>선택해주세요.</h2>
     </div>
   </section>
 
@@ -1142,32 +1140,12 @@ let ticking = false;
 addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { onScroll(); ticking = false; }); } }, { passive: true });
 onScroll();
 
-/* ===== 안내 문구 타이핑 + 섹션 진입 ===== */
-/* 타이핑된 글자에서 "이지모아"가 완성되면 형광펜 강조 */
-const guideHTML = f => esc(f).replace("이지모아", '<span class="hl">이지모아</span>');
-async function typeGuide() {
-  const el = $("gline"), typed = el.querySelector(".typed"), text = el.querySelector(".ghost").textContent;
-  const c = document.createElement("span"); c.className = "caret";
-  const out = document.createElement("span");
-  typed.append(out, c);
-  for (const f of frames(text)) {
-    out.innerHTML = guideHTML(f);
-    await wait(f.endsWith("\n") ? 160 : f.endsWith(" ") ? 80 : 36 + Math.random() * 24);
-  }
-  c.className = "caret idle";
-  await wait(1400);
-  c.className = "caret off";
-}
-const gTyped = $("gline").querySelector(".typed");
-if (reduce || !("IntersectionObserver" in window)) {
-  gTyped.innerHTML = guideHTML($("gline").querySelector(".ghost").textContent);
-} else {
+/* ===== 섹션 진입 ===== */
+if (!reduce && "IntersectionObserver" in window) {
   document.documentElement.classList.add("motion");
-  let typedOnce = false;
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;
     e.target.classList.add("in");
-    if (e.target.id === "guide" && !typedOnce) { typedOnce = true; typeGuide(); }
     io.unobserve(e.target);
   }), { threshold: 0.25 });
   document.querySelectorAll(".guide, .cand, .finale").forEach(s => io.observe(s));
