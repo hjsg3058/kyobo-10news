@@ -396,6 +396,19 @@
   .src.newsroom { background: var(--navy); color: var(--white); }
   .src.webzine { background: var(--white); color: var(--navy); }
 
+  /* 시험: 가로형 콘텐츠 목록 (작은 썸네일 왼쪽, 제목·출처 오른쪽) */
+  .cards { gap: 16px; width: 100%; }
+  .card {
+    display: grid;
+    grid-template-columns: 40% 1fr;
+    grid-template-rows: 1fr auto;
+    column-gap: 14px;
+    align-items: start;
+  }
+  .card .thumb { grid-row: 1 / span 2; align-self: center; border-width: 1.5px; border-radius: 12px; }
+  .card-title { margin: 0 0 6px; font-size: 15px; line-height: 1.4; -webkit-line-clamp: 3; align-self: end; }
+  .card .src { justify-self: start; }
+
   /* ---------- 마무리 ---------- */
   .finale {
     background: var(--green);
