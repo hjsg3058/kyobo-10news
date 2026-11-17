@@ -329,21 +329,21 @@
   .cand.slim { min-height: 0; padding-top: 96px; padding-bottom: 64px; }
   .cand.slim ul { margin-bottom: 0; }
   .cand-in { width: 100%; max-width: 432px; margin: 0 auto; }
-  .cand-head { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 22px; }
-  .cand .num { font-size: 62px; line-height: .9; margin: 0; font-variant-numeric: tabular-nums; }
-  .cand .of { font-size: 15px; font-weight: 800; padding-bottom: 5px; }
+  .cand-head { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 16px; }
+  .cand .num { font-size: 44px; line-height: .9; margin: 0; font-variant-numeric: tabular-nums; }
+  .cand .of { font-size: 13px; font-weight: 800; padding-bottom: 3px; }
   .cand h2 {
-    margin: 0 0 16px;
-    font-size: 30px;
-    line-height: 1.3;
+    margin: 0 0 14px;
+    font-size: clamp(20px, 5.6vw, 24px);
+    line-height: 1.38;
     letter-spacing: -0.035em;
-    font-weight: 800;
+    font-weight: 700;
     text-wrap: balance;
   }
   .cand ul { list-style: none; margin: 0 0 30px; padding: 0; }
-  .cand li { position: relative; padding-left: 18px; font-size: 17px; line-height: 1.6; color: #1E3F73; }
+  .cand li { position: relative; padding-left: 16px; font-size: 15.5px; line-height: 1.6; color: #1E3F73; }
   .cand li + li { margin-top: 6px; }
-  .cand li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .cand li::before { content: ""; position: absolute; left: 0; top: .6em; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
   /* 콘텐츠 카드는 후보보다 한 단계 작게 */
   .cards { display: grid; gap: 26px; width: 86%; margin: 0 auto; }
   .card { display: block; color: var(--navy); text-decoration: none; border-radius: 16px; }
@@ -400,13 +400,14 @@
   .cards { gap: 16px; width: 100%; }
   .card {
     display: grid;
-    grid-template-columns: 40% 1fr;
+    grid-template-columns: 54% 1fr;
     grid-template-rows: 1fr auto;
-    column-gap: 14px;
+    column-gap: 12px;
     align-items: start;
   }
   .card .thumb { grid-row: 1 / span 2; align-self: center; border-width: 1.5px; border-radius: 12px; }
-  .card-title { margin: 0 0 6px; font-size: 15px; line-height: 1.4; -webkit-line-clamp: 3; align-self: end; }
+  .card-title { margin: 0 0 6px; font-size: 13px; font-weight: 600; line-height: 1.38; letter-spacing: -0.03em; -webkit-line-clamp: 3; align-self: end; }
+  .card .src { font-size: 10px; padding: 3px 7px; }
   .card .src { justify-self: start; }
 
   /* ---------- 마무리 ---------- */
