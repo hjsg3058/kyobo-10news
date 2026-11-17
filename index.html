@@ -319,14 +319,14 @@
   .cand:nth-child(odd) { background: #F1F9EE; }
   .cand:nth-child(even) { background: #EEF3FA; }
   .cand .thumb { background: var(--white); }
+  /* 후보 영역: 한 화면 높이를 강제하지 않고 위아래 여백만 둠 */
   .cand {
-    min-height: 100svh;
-    padding: 84px 24px 64px;
+    padding: 64px 24px 56px;
     display: flex;
     align-items: center;
   }
   /* 관련 콘텐츠가 없는 후보는 한 화면을 다 채우지 않고 바로 다음 후보로 이어짐 */
-  .cand.slim { min-height: 0; padding-top: 96px; padding-bottom: 64px; }
+  .cand.slim { padding-top: 64px; padding-bottom: 56px; }
   .cand.slim ul { margin-bottom: 0; }
   .cand-in { width: 100%; max-width: 432px; margin: 0 auto; }
   .cand-head { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 16px; }
