@@ -815,7 +815,7 @@ const CANDIDATES = [
     ]
   },
   {
-    "title": "교보SBI저축은행 인수 등 종합금융사 도약 속도",
+    "title": "교보SBI저축은행 인수 등\n종합금융사 도약 속도",
     "desc": [
       "교보SBI저축은행 인수·교보자산운용 완전 자회사화",
       "라이프플래닛 흡수합병 추진…13년간 쌓은 디지털 역량으로 보험 혁신 가속"
@@ -836,7 +836,7 @@ const CANDIDATES = [
     ]
   },
   {
-    "title": "고객의 페이스메이커, FP와 함께한 ‘교보로런’ 동행 레이스",
+    "title": "고객의 페이스메이커, FP와 함께한\n‘교보로런’ 동행 레이스",
     "desc": [
       "전국 5개 도시에서 고객과 FP가 함께 달렸다",
       "인생의 페이스메이커와 나눈 ‘고객보장 완주’의 가치"
@@ -857,7 +857,7 @@ const CANDIDATES = [
     ]
   },
   {
-    "title": "수수료 분급제 선제적 대응…‘고객보장 완주’ 이끌 농부형 설계사 도입",
+    "title": "수수료 분급제 선제적 대응…\n‘고객보장 완주’ 이끌 농부형 설계사 도입",
     "desc": [
       "‘적성 신인’ 도입해 장기정착 우수FP 확대",
       "생애설계 전문가로의 성장 돕는 탄탄한 양성교육 체계 마련"
@@ -920,7 +920,7 @@ const CANDIDATES = [
     ]
   },
   {
-    "title": "신속 정확한 ‘정당보험금 지급’으로 고객보장 완성",
+    "title": "신속 정확한 ‘정당보험금 지급’으로\n고객보장 완성",
     "desc": [
       "보험금 지급까지 2시간…생보업계 지급 속도 1위",
       "보험금 청구 프로세스 간소화 및 지급 상세내역 안내 등 지급 마케팅 혁신"
@@ -941,7 +941,7 @@ const CANDIDATES = [
     ]
   },
   {
-    "title": "“상품 혁신 인정받았다” 5개 급부 배타적사용권 획득 쾌거!",
+    "title": "“상품 혁신 인정받았다”\n5개 급부 배타적사용권 획득 쾌거!",
     "desc": [
       "유병자 보험의 패러다임을 바꾼 ‘복합심사’부터 심폐소생술·뇌졸중 집중치료실까지",
       "고객 목소리에서 출발한 상품 혁신, 올해에만 배타적사용권 5건 획득"
@@ -991,7 +991,7 @@ const CANDIDATES = [
     ]
   },
   {
-    "title": "대한민국 지속가능성지수 1위 선정…17년 연속 영예",
+    "title": "대한민국 지속가능성지수 1위 선정…\n17년 연속 영예",
     "desc": [
       "16번째 지속가능경영보고서 발간…이해관계자 소통 강화",
       "4년 연속 생명보험 부문 ‘한국에서 가장 존경받는 기업’ 선정"
@@ -1053,7 +1053,7 @@ const CANDIDATES = [
     ]
   },
   {
-    "title": "교육부터 환경까지, 미래세대 바른 성장 지원 앞장",
+    "title": "교육부터 환경까지,\n미래세대 바른 성장 지원 앞장",
     "desc": [
       "제4회 지구하다 페스티벌 개최·보호아동 지원(꿈도깨비 사업) 등 사회공헌 활동 활발",
       "우리동네 무장애지도 탐사대 론칭…이동 약자 세상 넓힌다"
@@ -1128,7 +1128,7 @@ $("cands").innerHTML = CANDIDATES.map((c, i) => {
     <section class="cand${c.cards.length ? "" : " slim"}" id="cand-${n}" data-i="${i}" aria-labelledby="cand-${n}-t">
       <div class="cand-in">
         <div class="cand-head" aria-hidden="true"><p class="num stk pop">${n}</p><span class="of">/ 17</span></div>
-        <h2 class="rv" id="cand-${n}-t" style="--d:.08s"><span class="sr">후보 ${n}. </span>${esc(c.title)}</h2>
+        <h2 class="rv" id="cand-${n}-t" style="--d:.08s"><span class="sr">후보 ${n}. </span>${esc(c.title).replace(/\n/g, "<br>")}</h2>
         <ul class="rv" style="--d:.14s">${c.desc.map(d => `<li>${esc(d)}</li>`).join("")}</ul>
         <div class="cards">${cards}</div>
       </div>
